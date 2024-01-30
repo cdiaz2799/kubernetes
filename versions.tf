@@ -16,10 +16,14 @@ terraform {
   }
 }
 
-provider "kubernetes" {}
+provider "kubernetes" {
+  # Defined with $KUBE_CONFIG_PATH and $KUBE_CTX
+}
 
 
-provider "helm" {}
+provider "helm" {
+  # Defined with $KUBE_CONFIG_PATH and $KUBE_CTX
+}
 
 provider "onepassword" {
   service_account_token = var.op_access_token
