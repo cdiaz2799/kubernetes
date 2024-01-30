@@ -63,8 +63,9 @@ resource "kubernetes_deployment" "homeassistant" {
           }
 
           volume_mount {
-            mount_path = "/config"
             name       = "config"
+            sub_path   = "homeassistant"
+            mount_path = "/config"
           }
           volume_mount {
             mount_path = "/run/dbus"
@@ -76,7 +77,7 @@ resource "kubernetes_deployment" "homeassistant" {
         volume {
           name = "config"
           persistent_volume_claim {
-            claim_name = "home-assistant-config"
+            claim_name = kubernetes_persistent_volume_claim.home-automation.metadata[0].name
           }
         }
         volume {
@@ -90,7 +91,7 @@ resource "kubernetes_deployment" "homeassistant" {
   }
 }
 
-resource "kubernetes_persistent_volume_claim" "homeassistant" {
+resource "kubernetes_persistent_volume_claim" "home-automation" {
   metadata {
     name      = "home-assistant-config"
     namespace = kubernetes_namespace.home-automation.metadata[0].name
@@ -100,7 +101,8 @@ resource "kubernetes_persistent_volume_claim" "homeassistant" {
   }
 
   spec {
-    access_modes = ["ReadWriteOnce"]
+    storage_class_name = kubernetes_storage_class.nfs.metadata[0].name
+    access_modes       = ["ReadWriteOnce"]
     resources {
       requests = {
         storage = "1Gi"
