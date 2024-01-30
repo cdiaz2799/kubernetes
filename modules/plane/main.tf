@@ -2,7 +2,7 @@ resource "helm_release" "plane" {
   name       = "makeplane"
   repository = "https://helm.plane.so/"
   namespace  = kubernetes_namespace.plane.metadata[0].name
-  chart      = "makeplane/plane-ce"
+  chart      = "plane-ce"
 
   set {
     name  = "ingress.appHost"
@@ -39,7 +39,7 @@ resource "helm_release" "plane" {
     value = var.smtp_user
   }
 
-  set {
+  set_sensitive {
     name  = "smtp.password"
     value = var.smtp_password
   }

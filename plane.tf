@@ -2,6 +2,7 @@ module "plane" {
   source = "./modules/plane"
 
   app_ingress           = var.plane_ingress
+  minio_ingress         = "plane-assets.cdiaz.cloud"
   cluster_storage_class = kubernetes_storage_class.nfs.metadata[0].name
 
   smtp_from        = data.onepassword_item.plane-smtp.username
