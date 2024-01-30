@@ -5,15 +5,13 @@ include:
 
 variables:
   KUBE_CTX: homelab
+  TF_IMPLICIT_INIT: true
   TF_STATE_NAME: prod
 
 stages: [test, validate, build, deploy, cleanup]
 
 default:
   image: registry.gitlab.com/containers1211942/opentofu
-  before_script:
-    - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-    - kubectl config get-contexts
 
 fmt:
   stage: validate
