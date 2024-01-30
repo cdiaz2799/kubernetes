@@ -78,8 +78,6 @@ apply:
     name: ${TF_STATE_NAME}
     action: start
   resource_group: ${TF_STATE_NAME}
-  only:
-    - main
   rules:
     - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && "$[[ inputs.auto_apply ]]" == "true"'
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
