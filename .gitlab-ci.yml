@@ -1,5 +1,6 @@
 ---
 include:
+  - component: gitlab.com/components/secret-detection/secret-detection@main
   - component: gitlab.com/components/opentofu/full-pipeline@0.10.0
     inputs:
       # The version must currently be specified explicitly as an input,
