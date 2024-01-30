@@ -5,6 +5,7 @@ include:
 
 variables:
   KUBE_CTX: homelab-infrastructure/kubernetes:homelab
+  KUBE_CONFIG_PATH: ${KUBECONFIG}
   TF_IMPLICIT_INIT: "true"
   TF_STATE_NAME: prod
 
@@ -16,7 +17,6 @@ default:
     - gitlab-tofu init --upgrade
     - kubectl config get-contexts
     - kubectl config use-context ${KUBE_CTX}
-    - echo ${KUBECONFIG}
 
 fmt:
   stage: validate

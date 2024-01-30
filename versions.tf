@@ -16,13 +16,10 @@ terraform {
   }
 }
 
-provider "kubernetes" {
-  # config_path = "~/.kube/config"
-}
+provider "kubernetes" {}
 
-provider "helm" {
 
-}
+provider "helm" {}
 
 provider "onepassword" {
   service_account_token = var.op_access_token
