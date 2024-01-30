@@ -2,7 +2,7 @@ resource "helm_release" "op-helm-release" {
   name       = "1password"
   repository = "https://1password.github.io/connect-helm-charts"
   chart      = "connect"
-  namespace  = "1password"
+  namespace  = kubernetes_namespace.op.metadata[0].name
 
   set {
     name  = "connect.credentialsName"
@@ -22,18 +22,26 @@ resource "helm_release" "op-helm-release" {
 
 resource "kubernetes_secret" "op-credentials-file" {
   metadata {
-    name = "op-service-account"
+    name      = "op-service-account"
+    namespace = kubernetes_namespace.op.metadata[0].name
   }
   data = {
-    token = file("${var.op_credentials_file}")
+    "1password-credentials.json" = "${file("${var.op_credentials_file}")}"
   }
 }
 
 resource "kubernetes_secret" "op_access_token" {
   metadata {
-    name = "op-access-token"
+    name      = "op-access-token"
+    namespace = kubernetes_namespace.op.metadata[0].name
   }
   data = {
     token = var.op_access_token
+  }
+}
+
+resource "kubernetes_namespace" "op" {
+  metadata {
+    name = "1password"
   }
 }
