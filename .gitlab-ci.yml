@@ -5,8 +5,9 @@ include:
 
 variables:
   KUBE_CTX: homelab
+  TF_STATE_NAME: prod
 
-stages: [validate, test, build, deploy, cleanup]
+stages: [test, validate, build, deploy, cleanup]
 
 default:
   image: registry.gitlab.com/containers1211942/opentofu
@@ -28,3 +29,17 @@ fmt:
       - ${CI_PROJECT_DIR}/.terraform
   script:
     - gitlab-tofu fmt
+
+validate:
+  stage: validate
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_BRANCH
+  cache:
+    key: ${CI_PROJECT_DIR}
+    paths:
+      - ${CI_PROJECT_DIR}/.terraform
+  script:
+    - gitlab-tofu validate
