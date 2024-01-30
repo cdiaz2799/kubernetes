@@ -1,10 +1,10 @@
 ---
 include:
-  - template: Security/SAST-IaC.gitlab-ci.yml
-  - template: Jobs/Secret-Detection.gitlab-ci.yml
+  - template: Security/SAST-IaC.gitlab-ci.yml # IaC Scanning
+  - template: Jobs/Secret-Detection.gitlab-ci.yml # Secret Detection
 
 variables:
-  KUBE_CTX: homelab
+  KUBE_CTX: homelab-infrastructure/kubernetes:homelab
   TF_IMPLICIT_INIT: "true"
   TF_STATE_NAME: prod
 
