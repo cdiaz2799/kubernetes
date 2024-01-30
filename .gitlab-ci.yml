@@ -39,5 +39,7 @@ validate:
     key: ${CI_PROJECT_DIR}
     paths:
       - ${CI_PROJECT_DIR}/.terraform
+  before_script:
+    - gitlab-tofu init --upgrade
   script:
     - gitlab-tofu validate
