@@ -8,8 +8,9 @@ variables:
   KUBE_CONFIG_PATH: ${KUBECONFIG}
   TF_IMPLICIT_INIT: "true"
   TF_STATE_NAME: prod
+  TF_IN_AUTOMATION: "true"
 
-stages: [test, validate, build, deploy, cleanup]
+stages: [test, validate, build, deploy]
 
 default:
   image: registry.gitlab.com/containers1211942/opentofu
@@ -70,3 +71,22 @@ plan:
   script:
     - gitlab-tofu plan
     - gitlab-tofu plan-json
+
+apply:
+  stage: deploy
+  environment:
+    name: ${TF_STATE_NAME}
+    action: start
+  resource_group: ${TF_STATE_NAME}
+  only:
+    - main
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && "$[[ inputs.auto_apply ]]" == "true"'
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+  cache:
+    key: ${CI_PROJECT_DIR}
+    paths:
+      - ./.terraform
+  script:
+    - gitlab-tofu apply
