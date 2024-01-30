@@ -14,6 +14,7 @@ default:
   image: registry.gitlab.com/containers1211942/opentofu
   before_script:
     - gitlab-tofu init --upgrade
+    - kubectl config get-contexts
 
 fmt:
   stage: validate
