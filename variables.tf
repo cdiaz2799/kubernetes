@@ -22,3 +22,10 @@ variable "gitlab_access_token" {
   type        = string
   sensitive   = true
 }
+
+variable "plane_ingress" {
+  description = "Plane Ingress"
+  type        = string
+  sensitive   = false
+  default     = "plane.cdiaz.cloud"
+}
