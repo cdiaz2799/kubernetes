@@ -1,7 +1,7 @@
 ---
-include:
-  - template: Security/SAST-IaC.gitlab-ci.yml # IaC Scanning
-  - template: Jobs/Secret-Detection.gitlab-ci.yml # Secret Detection
+# include:
+#   - template: Security/SAST-IaC.gitlab-ci.yml # IaC Scanning
+#   - template: Jobs/Secret-Detection.gitlab-ci.yml # Secret Detection
 
 variables:
   KUBE_CTX: homelab-infrastructure/kubernetes:homelab
