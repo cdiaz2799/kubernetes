@@ -12,6 +12,8 @@ stages: [test, validate, build, deploy, cleanup]
 
 default:
   image: registry.gitlab.com/containers1211942/opentofu
+  before_script:
+    - gitlab-tofu init --upgrade
 
 fmt:
   stage: validate
@@ -24,7 +26,7 @@ fmt:
   cache:
     key: ${CI_PROJECT_DIR}
     paths:
-      - ${CI_PROJECT_DIR}/.terraform
+      - ./.terraform
   script:
     - gitlab-tofu fmt
 
@@ -38,8 +40,30 @@ validate:
   cache:
     key: ${CI_PROJECT_DIR}
     paths:
-      - ${CI_PROJECT_DIR}/.terraform
-  before_script:
-    - gitlab-tofu init --upgrade
+      - ./.terraform
   script:
     - gitlab-tofu validate
+
+plan:
+  stage: build
+  environment:
+    name: ${TF_STATE_NAME}
+    action: prepare
+  resource_group: ${TF_STATE_NAME}
+  artifacts:
+    paths:
+      - ./plan.cache
+    reports:
+      terraform: ./plan.json
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_BRANCH
+  cache:
+    key: ${CI_PROJECT_DIR}
+    paths:
+      - ./.terraform
+  script:
+    - gitlab-tofu plan
+    - gitlab-tofu plan-json
