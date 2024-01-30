@@ -1,6 +1,7 @@
 ---
 include:
-  - component: gitlab.com/components/secret-detection/secret-detection@main
+  - template: Security/SAST-IaC.gitlab-ci.yml
+  - template: Jobs/Secret-Detection.gitlab-ci.yml
   - component: gitlab.com/components/opentofu/full-pipeline@0.10.0
     inputs:
       # The version must currently be specified explicitly as an input,
@@ -19,6 +20,7 @@ before_script: >
     curl -sSfo op.zip \
     https://cache.agilebits.com/dist/1P/op2/pkg/"$OP_VERSION"/op_linux_"$ARCH"_"$OP_VERSION".zip \
     && unzip -od /usr/local/bin/ op.zip \
-    && rm op.zip
+    && rm op.zip \
+  kubectl config get-contexts
 
 stages: [validate, test, build, deploy, cleanup]
