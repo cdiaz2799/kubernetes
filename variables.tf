@@ -16,3 +16,9 @@ variable "op_access_token" {
   type        = string
   sensitive   = true
 }
+
+variable "gitlab_access_token" {
+  description = "GitLab Agent Access Token"
+  type        = string
+  sensitive   = true
+}
