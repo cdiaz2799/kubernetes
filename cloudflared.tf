@@ -4,7 +4,7 @@ resource "cloudflare_tunnel_config" "tunnel" {
   config {
     ingress_rule {
       hostname = cloudflare_record.actual.name
-      service  = "${kubernetes_service.actual.metadata[0].name}:${kubernetes_service.actual.spec[0].port[0].port}"
+      service  = "http://${kubernetes_service.actual.metadata[0].name}:${kubernetes_service.actual.spec[0].port[0].port}"
     }
 
     ingress_rule {
