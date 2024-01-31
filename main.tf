@@ -20,4 +20,6 @@ resource "kubernetes_namespace" "home-automation" {
   }
 }
 
-
+data "cloudflare_zone" "domain" {
+  name = var.cloudflare_zone
+}
