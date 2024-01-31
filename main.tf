@@ -19,3 +19,5 @@ resource "kubernetes_namespace" "home-automation" {
     name = "home-automation"
   }
 }
+
+
