@@ -1,5 +1,9 @@
 terraform {
   required_providers {
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = ">= 4.23.0"
+    }
     kubernetes = {
       source  = "hashicorp/kubernetes"
       version = ">= 2.25.2"
@@ -28,3 +32,8 @@ provider "helm" {
 provider "onepassword" {
   service_account_token = var.op_access_token
 }
+
+provider "cloudflare" {
+  # Provided via $CLOUDFLARE_API_TOKEN env var
+}
+
