@@ -29,3 +29,10 @@ variable "plane_ingress" {
   sensitive   = false
   default     = "plane.cdiaz.cloud"
 }
+
+variable "cloudflare_zone" {
+  description = "Cloudflare Domain / Zone"
+  type        = string
+  sensitive   = false
+  default     = "cdiaz.cloud"
+}

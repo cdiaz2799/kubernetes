@@ -5,3 +5,11 @@ output "cloudflared_namespace" {
 output "cloudflared_tunnel_name" {
   value = cloudflare_tunnel.default.name
 }
+
+output "cloudflared_cname" {
+  value = cloudflare_tunnel.default.cname
+}
+
+output "cloudflared_tunnel_id" {
+  value = cloudflare_tunnel.default.id
+}

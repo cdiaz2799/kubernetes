@@ -1,6 +1,14 @@
+resource "cloudflare_record" "actual" {
+  name    = "budget"
+  type    = "CNAME"
+  zone_id = data.cloudflare_zone.domain.zone_id
+  value   = module.cloudflared_tunnel.cloudflared_cname
+  proxied = true
+}
+
 resource "kubernetes_service" "actual" {
   metadata {
-    name = "actual"
+    name      = "actual"
     namespace = kubernetes_namespace.actual.metadata[0].name
   }
   spec {
@@ -13,7 +21,7 @@ resource "kubernetes_service" "actual" {
       port = 5006
     }
   }
-  
+
 }
 
 resource "kubernetes_deployment" "actual" {
@@ -43,7 +51,7 @@ resource "kubernetes_deployment" "actual" {
           image = "docker.io/actualbudget/actual-server:latest-alpine"
 
           port {
-            name = "actual"
+            name           = "actual"
             container_port = 5006
           }
 
