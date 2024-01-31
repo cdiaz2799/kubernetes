@@ -1,3 +1,21 @@
+resource "kubernetes_service" "actual" {
+  metadata {
+    name = "actual"
+    namespace = kubernetes_namespace.actual.metadata[0].name
+  }
+  spec {
+    selector = {
+      "app" = "actual"
+    }
+    type = "ClusterIP"
+    port {
+      name = "actual"
+      port = 5006
+    }
+  }
+  
+}
+
 resource "kubernetes_deployment" "actual" {
   metadata {
     name      = "actual"
@@ -25,6 +43,7 @@ resource "kubernetes_deployment" "actual" {
           image = "docker.io/actualbudget/actual-server:latest-alpine"
 
           port {
+            name = "actual"
             container_port = 5006
           }
 
