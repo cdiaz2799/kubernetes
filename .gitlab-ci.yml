@@ -1,90 +1,92 @@
----
-# include:
-#   - template: Security/SAST-IaC.gitlab-ci.yml # IaC Scanning
-#   - template: Jobs/Secret-Detection.gitlab-ci.yml # Secret Detection
-
+# You can override the included template(s) by including variable overrides
+# SAST customization: https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
+# Secret Detection customization: https://docs.gitlab.com/ee/user/application_security/secret_detection/#customizing-settings
+# Dependency Scanning customization: https://docs.gitlab.com/ee/user/application_security/dependency_scanning/#customizing-the-dependency-scanning-settings
+# Container Scanning customization: https://docs.gitlab.com/ee/user/application_security/container_scanning/#customizing-the-container-scanning-settings
+# Note that environment variables can be set in several places
+# See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
 variables:
   KUBE_CTX: homelab-infrastructure/kubernetes:homelab
-  KUBE_CONFIG_PATH: ${KUBECONFIG}
-  TF_IMPLICIT_INIT: "true"
+  KUBE_CONFIG_PATH: "${KUBECONFIG}"
+  TF_IMPLICIT_INIT: 'true'
   TF_STATE_NAME: prod
-  TF_IN_AUTOMATION: "true"
-
-stages: [test, validate, build, deploy]
-
+  TF_IN_AUTOMATION: 'true'
+stages:
+- test
+- validate
+- build
+- deploy
 default:
   image: registry.gitlab.com/containers1211942/opentofu
   before_script:
-    - gitlab-tofu init --upgrade
-    - kubectl config get-contexts
-    - kubectl config use-context ${KUBE_CTX}
-
+  - gitlab-tofu init --upgrade
+  - kubectl config get-contexts
+  - kubectl config use-context ${KUBE_CTX}
 fmt:
   stage: validate
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_OPEN_MERGE_REQUESTS
-      when: never
-    - if: $CI_COMMIT_BRANCH
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  - if: "$CI_OPEN_MERGE_REQUESTS"
+    when: never
+  - if: "$CI_COMMIT_BRANCH"
   allow_failure: true
   cache:
-    key: ${CI_PROJECT_DIR}
+    key: "${CI_PROJECT_DIR}"
     paths:
-      - ./.terraform
+    - "./.terraform"
   script:
-    - gitlab-tofu fmt
-
+  - gitlab-tofu fmt
 validate:
   stage: validate
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_OPEN_MERGE_REQUESTS
-      when: never
-    - if: $CI_COMMIT_BRANCH
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  - if: "$CI_OPEN_MERGE_REQUESTS"
+    when: never
+  - if: "$CI_COMMIT_BRANCH"
   cache:
-    key: ${CI_PROJECT_DIR}
+    key: "${CI_PROJECT_DIR}"
     paths:
-      - ./.terraform
+    - "./.terraform"
   script:
-    - gitlab-tofu validate
-
+  - gitlab-tofu validate
 plan:
   stage: build
   environment:
-    name: ${TF_STATE_NAME}
+    name: "${TF_STATE_NAME}"
     action: prepare
-  resource_group: ${TF_STATE_NAME}
+  resource_group: "${TF_STATE_NAME}"
   artifacts:
     paths:
-      - ./plan.cache
+    - "./plan.cache"
     reports:
-      terraform: ./plan.json
+      terraform: "./plan.json"
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_OPEN_MERGE_REQUESTS
-      when: never
-    - if: $CI_COMMIT_BRANCH
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  - if: "$CI_OPEN_MERGE_REQUESTS"
+    when: never
+  - if: "$CI_COMMIT_BRANCH"
   cache:
-    key: ${CI_PROJECT_DIR}
+    key: "${CI_PROJECT_DIR}"
     paths:
-      - ./.terraform
+    - "./.terraform"
   script:
-    - gitlab-tofu plan
-    - gitlab-tofu plan-json
-
+  - gitlab-tofu plan
+  - gitlab-tofu plan-json
 apply:
   stage: deploy
   environment:
-    name: ${TF_STATE_NAME}
+    name: "${TF_STATE_NAME}"
     action: start
-  resource_group: ${TF_STATE_NAME}
+  resource_group: "${TF_STATE_NAME}"
   rules:
-    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && "$[[ inputs.auto_apply ]]" == "true"'
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      when: manual
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && "$[[ inputs.auto_apply ]]" == "true"
+  - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+    when: manual
   cache:
-    key: ${CI_PROJECT_DIR}
+    key: "${CI_PROJECT_DIR}"
     paths:
-      - ./.terraform
+    - "./.terraform"
   script:
-    - gitlab-tofu apply
+  - gitlab-tofu apply
+include:
+- template: Security/Secret-Detection.gitlab-ci.yml
