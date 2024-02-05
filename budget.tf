@@ -47,8 +47,9 @@ resource "kubernetes_deployment" "actual" {
       }
       spec {
         container {
-          name  = "actual-budget"
-          image = "docker.io/actualbudget/actual-server:latest-alpine"
+          name              = "actual-budget"
+          image             = "actualbudget/actual-server:24.2.0-alpine"
+          image_pull_policy = "Always"
 
           port {
             name           = "actual"
