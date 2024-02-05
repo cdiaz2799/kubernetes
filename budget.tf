@@ -4,6 +4,7 @@ resource "cloudflare_record" "actual" {
   zone_id = data.cloudflare_zone.domain.zone_id
   value   = module.cloudflared_tunnel.cloudflared_cname
   proxied = true
+  comment = "Managed by Terraform"
 }
 
 resource "kubernetes_service" "actual" {

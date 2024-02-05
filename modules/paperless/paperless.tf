@@ -69,7 +69,7 @@ resource "kubernetes_deployment" "paperless" {
 
           env_from {
             secret_ref {
-              name = kubernetes_secret.paperless-db.metadata[0].name
+              name = kubernetes_secret.postgres-db.metadata[0].name
             }
           }
 

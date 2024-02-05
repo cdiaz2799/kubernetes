@@ -59,12 +59,12 @@ variable "smtp_creds" {
   description = "SMTP Credentials for the Paperless instance"
   sensitive   = true
   type = object({
-    host     = string
-    port     = number
-    username = string
-    password = string
-    from     = string
-    tls      = bool
-    ssl      = bool
+    PAPERLESS_EMAIL_HOST          = string
+    PAPERLESS_EMAIL_PORT          = number
+    PAPERLESS_EMAIL_HOST_USER     = string
+    PAPERLESS_EMAIL_HOST_PASSWORD = string
+    PAPERLESS_EMAIL_FROM          = string
+    PAPERLESS_EMAIL_USE_TLS       = bool
+    PAPERLESS_EMAIL_USE_SSL       = bool
   })
 }

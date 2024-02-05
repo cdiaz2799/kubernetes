@@ -1,40 +1,32 @@
-
-module "paperless-db" {
-  app_name  = "paperless-ngx"
-  source    = "./modules/postgres"
-  namespace = kubernetes_namespace.paperless.metadata[0].name
-
-  db_name  = "paperless"
-  username = "paperless"
-  password = random_password.paperless-db.result
-
-  pvc_name = kubernetes_persistent_volume_claim.paperless.metadata[0].name
+resource "cloudflare_record" "paperless" {
+  name    = "paperless"
+  type    = "CNAME"
+  zone_id = data.cloudflare_zone.domain.zone_id
+  value   = module.cloudflared_tunnel.cloudflared_cname
+  proxied = true
+  comment = "Managed by Terraform"
 }
+module "paperless" {
+  source = "./modules/paperless"
 
-resource "kubernetes_persistent_volume_claim" "paperless" {
-  metadata {
-    name      = "paperless"
-    namespace = kubernetes_namespace.paperless.metadata[0].name
-    labels = {
-      "app" = "paperless"
-    }
-  }
-  spec {
-    access_modes = ["ReadWriteOnce"]
-    resources {
-      requests = {
-        storage = "10Gi"
-      }
-    }
+  url            = "paperless.cdiaz.cloud"
+  admin_user     = "value"
+  admin_email    = "value"
+  admin_password = "value"
+
+  smtp_creds = {
+    PAPERLESS_EMAIL_FROM          = data.onepassword_item.smtp.username
+    PAPERLESS_EMAIL_HOST          = data.onepassword_item.smtp.hostname
+    PAPERLESS_EMAIL_HOST_USER     = data.onepassword_item.smtp.username
+    PAPERLESS_EMAIL_HOST_PASSWORD = data.onepassword_item.smtp.password
+    PAPERLESS_EMAIL_PORT          = data.onepassword_item.smtp.port
+    PAPERLESS_EMAIL_USE_SSL       = true
+    PAPERLESS_EMAIL_USE_TLS       = true
   }
 }
 
-resource "kubernetes_namespace" "paperless" {
-  metadata {
-    name = "paperless"
-  }
-}
+data "onepassword_item" "smtp" {
+  vault = var.op_vault
+  title = "SMTP Credentials"
 
-resource "random_password" "paperless-db" {
-  length = 24
 }
