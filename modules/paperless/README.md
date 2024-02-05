@@ -9,9 +9,9 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_helm"></a> [helm](#provider\_helm) | 2.12.1 |
-| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | 2.25.2 |
-| <a name="provider_random"></a> [random](#provider\_random) | 3.6.0 |
+| <a name="provider_helm"></a> [helm](#provider\_helm) | >= 2.12.1 |
+| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | >= 2.25.2 |
+| <a name="provider_random"></a> [random](#provider\_random) | n/a |
 
 ## Modules
 
@@ -53,11 +53,13 @@ No modules.
 | <a name="input_db_user"></a> [db\_user](#input\_db\_user) | Database User | `string` | `"paperless"` | no |
 | <a name="input_gotenberg_port"></a> [gotenberg\_port](#input\_gotenberg\_port) | Port for Gotenberg | `number` | `3000` | no |
 | <a name="input_paperless_port"></a> [paperless\_port](#input\_paperless\_port) | Port for Paperless | `number` | `8000` | no |
-| <a name="input_smtp_creds"></a> [smtp\_creds](#input\_smtp\_creds) | SMTP Credentials for the Paperless instance | <pre>object({<br>    host     = string<br>    port     = number<br>    username = string<br>    password = string<br>    from     = string<br>    tls      = bool<br>    ssl      = bool<br>  })</pre> | n/a | yes |
+| <a name="input_smtp_creds"></a> [smtp\_creds](#input\_smtp\_creds) | SMTP Credentials for the Paperless instance | <pre>object({<br>    PAPERLESS_EMAIL_HOST          = string<br>    PAPERLESS_EMAIL_PORT          = number<br>    PAPERLESS_EMAIL_HOST_USER     = string<br>    PAPERLESS_EMAIL_HOST_PASSWORD = string<br>    PAPERLESS_EMAIL_FROM          = string<br>    PAPERLESS_EMAIL_USE_TLS       = bool<br>    PAPERLESS_EMAIL_USE_SSL       = bool<br>  })</pre> | n/a | yes |
 | <a name="input_storage_class"></a> [storage\_class](#input\_storage\_class) | Storage Class for the Peristent Volume | `string` | `"nfs-csi"` | no |
 | <a name="input_tika_port"></a> [tika\_port](#input\_tika\_port) | Port for Tika | `number` | `9998` | no |
 | <a name="input_url"></a> [url](#input\_url) | URL for the Paperless instance | `string` | n/a | yes |
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_paperless_url"></a> [paperless\_url](#output\_paperless\_url) | n/a |
