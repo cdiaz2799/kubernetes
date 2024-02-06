@@ -3,8 +3,13 @@ resource "cloudflare_tunnel_config" "tunnel" {
   tunnel_id  = module.cloudflared_tunnel.cloudflared_tunnel_id
   config {
     ingress_rule {
-      hostname = cloudflare_record.actual.name
-      service  = "http://${kubernetes_service.actual.metadata[0].name}.${kubernetes_service.actual.metadata[0].name}.svc.cluster:${kubernetes_service.actual.spec[0].port[0].port}"
+      hostname = cloudflare_record.actual.hostname
+      service  = "http://${kubernetes_service.actual.metadata[0].name}.${kubernetes_service.actual.metadata[0].namespace}.svc.cluster.local:${kubernetes_service.actual.spec[0].port[0].port}"
+    }
+
+    ingress_rule {
+      hostname = cloudflare_record.paperless.hostname
+      service  = module.paperless.paperless_url
     }
 
     ingress_rule {
