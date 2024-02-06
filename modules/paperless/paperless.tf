@@ -52,6 +52,15 @@ resource "kubernetes_deployment" "paperless" {
             host_port      = 8000
           }
 
+          liveness_probe {
+            http_get {
+              port = 8000
+            }
+            initial_delay_seconds = 60
+            timeout_seconds       = 10
+            period_seconds        = 30
+          }
+
           env_from {
             config_map_ref {
               name = kubernetes_config_map.postgresql.metadata[0].name
@@ -87,7 +96,59 @@ resource "kubernetes_deployment" "paperless" {
               name = kubernetes_secret.smtp_creds.metadata[0].name
             }
           }
+
+          env_from {
+            secret_ref {
+              name = kubernetes_secret.paperless.metadata[0].name
+            }
+          }
+          volume_mount {
+            name       = "paperless"
+            mount_path = "/usr/src/paperless/data"
+            sub_path   = "data"
+          }
+          volume_mount {
+            name       = "paperless"
+            mount_path = "/usr/src/paperless/media"
+            sub_path   = "media"
+          }
+          volume_mount {
+            name       = "paperless"
+            mount_path = "/usr/src/paperless/export"
+            sub_path   = "export"
+          }
+          volume_mount {
+            name       = "paperless"
+            mount_path = "/usr/src/paperless/consume"
+            sub_path   = "consume"
+          }
         }
+        volume {
+          name = "paperless"
+          persistent_volume_claim {
+            claim_name = kubernetes_persistent_volume_claim.paperless.metadata[0].name
+          }
+        }
+      }
+    }
+  }
+}
+
+resource "kubernetes_persistent_volume_claim" "paperless" {
+  metadata {
+    name      = "paperless"
+    namespace = kubernetes_namespace.paperless.metadata[0].name
+    labels = {
+      "app" = "paperless"
+    }
+  }
+  wait_until_bound = false
+  spec {
+    storage_class_name = var.storage_class
+    access_modes       = ["ReadWriteOnce"]
+    resources {
+      requests = {
+        storage = "1Gi"
       }
     }
   }
