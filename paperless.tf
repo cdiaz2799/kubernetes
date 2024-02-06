@@ -9,10 +9,10 @@ resource "cloudflare_record" "paperless" {
 module "paperless" {
   source = "./modules/paperless"
 
-  url            = "paperless.cdiaz.cloud"
-  admin_user     = "value"
-  admin_email    = "value"
-  admin_password = "value"
+  url            = "https://paperless.cdiaz.cloud"
+  admin_user     = data.onepassword_item.paperless.username
+  admin_email    = data.onepassword_item.paperless.username
+  admin_password = data.onepassword_item.paperless.password
 
   smtp_creds = {
     PAPERLESS_EMAIL_FROM          = data.onepassword_item.smtp.username
@@ -28,5 +28,9 @@ module "paperless" {
 data "onepassword_item" "smtp" {
   vault = var.op_vault
   title = "SMTP Credentials"
+}
 
+data "onepassword_item" "paperless" {
+  vault = var.op_vault
+  title = "Paperless"
 }
