@@ -8,7 +8,10 @@ resource "kubernetes_service" "paperless" {
     }
   }
   spec {
-    type = "ClusterIP"
+    selector = {
+      "app"       = "paperless"
+      "component" = "web"
+    }
     port {
       port        = var.paperless_port
       target_port = 8000
@@ -68,6 +71,12 @@ resource "kubernetes_deployment" "paperless" {
           }
 
           env_from {
+            config_map_ref {
+              name = kubernetes_config_map.paperless.metadata[0].name
+            }
+          }
+
+          env_from {
             secret_ref {
               name = kubernetes_secret.postgres-db.metadata[0].name
             }
@@ -93,7 +102,8 @@ resource "kubernetes_config_map" "paperless" {
 
   data = {
     # General Settings
-    "PAPERLESS_URL" = var.url
+    "PAPERLESS_URL"  = var.url
+    "PAPERLESS_PORT" = 8000
     # OCR Settings
     "PAPERLESS_OCR_LANGUAGE" = "eng"
     "PAPERLESS_OCR_MODE"     = "redo"
